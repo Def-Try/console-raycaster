@@ -1,0 +1,5 @@
+{
+"texture": "ENEMY ",
+"mask": "WRWRW",
+"color": "WHITE"
+}

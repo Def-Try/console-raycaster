@@ -1,0 +1,6 @@
+{
+"nextlevel": "level0.txt",
+"name": "########",
+"terrain": "        \n S      \n        \n        \n        ",
+"depth": 8
+}

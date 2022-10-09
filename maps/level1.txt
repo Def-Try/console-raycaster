@@ -1,0 +1,6 @@
+{
+"nextlevel": "level2.txt",
+"name": "Tuto#ial",
+"terrain": "# ######\n#S     #\n#      #\n      E#\n########",
+"depth": 8
+}

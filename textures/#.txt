@@ -1,0 +1,5 @@
+{
+"texture": "█◘▄◘",
+"mask": "RGBG",
+"color": "WHITE"
+}

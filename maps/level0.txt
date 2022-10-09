@@ -1,0 +1,10 @@
+{
+"nextlevel": "level1.txt",
+"name": "Tutorial",
+"terrain": "##    ##\n#S     #\n#      #\n#     E#\n########",
+"lighting": "        \n #      \n        \n      # \n        ",
+"depth": 8,
+"entities": {
+    "x:3,y:3": {"sprite": "test"}
+    }
+}
