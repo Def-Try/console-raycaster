@@ -1,5 +1,6 @@
 import curses
 from math import cos, radians
+from time import time
 
 from raycasting import Raycasting
 from utils import Vec2
@@ -32,8 +33,13 @@ class Drawing:
         self.caster = Raycasting()
         self.textures = textures
         self.frame = 0
+        self.oframe = 1
+        self.fps = "..."
+        self.time = time() // 10
 
     def get_texture(self, b, c, r):
+        if b == "?":
+            return " ", 0
         if b == 'E':
             return "THE END IS NEVER "[(r * TILESIZE + c + self.frame % 17) % 17], self.frame % 255
         try:
@@ -47,8 +53,13 @@ class Drawing:
         self.screen.refresh()
 
     def debuginfo(self, playerpos, playerangle):
+        if self.time != time() // 10:
+            self.time = time() // 10
+            self.fps = self.frame - self.oframe
+            self.oframe = self.frame
         h, w = self.screen.getmaxyx()
-        self.screen.addstr(h-1,0, "Pos: " + str(playerpos) + "  Ang: " + str(playerangle))
+        self.screen.addstr(h - 1, 0, "Pos: " + str(playerpos) + "  Ang: " + str(playerangle))
+        self.screen.addstr(0, w - len("FPS:" + str(self.fps)), "FPS:" + str(self.fps))
 
     def rendermap(self, world: World, playerpos):
         for col in range(10):
@@ -68,13 +79,12 @@ class Drawing:
                 self.screen.addstr(row, col, tex, curses.color_pair(color) | shade)
 
     def renderworld(self, world: World, playerpos, playerangle):
-        prevtex = " "
         self.frame += 1
         screen_height, screen_width = self.screen.getmaxyx()
         player_light = world.get_light(playerpos)
         for col in range(screen_width):
             rayangle = (playerangle.x - FOV / 2) + (col / screen_width) * FOV
-            block, light, dist = self.caster.raycast(playerpos, rayangle, 32, 0.1, world)
+            block, light, dist = self.caster.raycast(playerpos, rayangle, 8, 0.1, world)
             dist *= cos(playerangle.x - rayangle)
             if block not in (' ', '.'):
                 ceiling = int(screen_height / 2 - screen_height / dist) + playerangle.y
@@ -97,11 +107,8 @@ class Drawing:
                             tex = " "
                             shade = curses.A_DIM
 
-                        if block == "?":
-                            tex = prevtex
-                            dist = 0
-                            shade = curses.A_NORMAL
-                            color = curses.COLOR_BLACK
+                        if block == '?':
+                            tex = ""
                     else:
                         color = curses.COLOR_BLUE
                         tex = "F"
@@ -127,6 +134,5 @@ class Drawing:
                         if 0 <= col < 2:
                             tex = " "
                     self.screen.insstr(row, col, tex, curses.color_pair(color) | shade)
-                    prevtex = tex
 
 # update

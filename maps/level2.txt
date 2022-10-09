@@ -2,5 +2,6 @@
 "nextlevel": "level3.txt",
 "name": "T##o#i#l",
 "terrain": "# #  ###\n S     #\n#      #\n      E#\n####  ##",
+"lighting": "        \n #      \n        \n      # \n        ",
 "depth": 8
 }

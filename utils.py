@@ -3,6 +3,7 @@ from math import cos, sin, degrees, radians
 SPEED = 0.3
 ROTATION_SPEED = radians(5)
 
+
 class Vec2:
     def __init__(self, x, y):
         self.x = x
@@ -43,11 +44,13 @@ class Vec2:
     def __str__(self):
         return f"Vec2{self.x, self.y}"
 
+
 def tolist(istr):
     glist = {}
     for i in range(len(istr)):
         glist[i] = istr[i]
     return glist
+
 
 def tostr(ilist):
     gstr = ""
@@ -55,17 +58,19 @@ def tostr(ilist):
         gstr += ilist[i]
     return gstr
 
-playerpos = Vec2(2,2)
-playerangle = Vec2(0,0)
+
+playerpos = Vec2(2, 2)
+playerangle = Vec2(0, 0)
+
 
 def handlecontrols(screen, world):
     global playerpos, playerangle
-    screen.timeout(1)
+    screen.timeout(0)
     key_code = screen.getch()
     key = chr(key_code) if 0 < key_code < 256 else 0
     if key == chr(27):
         exit()
-    shiftvec = Vec2(0,0)
+    shiftvec = Vec2(0, 0)
     if key == 'w':
         shiftvec = Vec2(sin(playerangle.x) * SPEED, cos(playerangle.x) * SPEED)
         playerpos += shiftvec
@@ -80,6 +85,9 @@ def handlecontrols(screen, world):
         playerangle += Vec2(0, degrees(ROTATION_SPEED))
     elif key == 'f':
         playerangle -= Vec2(0, degrees(ROTATION_SPEED))
+
+    if world.get_block(playerpos) == 'E':
+        return 'NEXT'
 
     if not world.get_block(playerpos) in (" ", "?", ".", "S", "E"):
         playerpos -= shiftvec

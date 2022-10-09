@@ -18,6 +18,6 @@ class Raycasting:
             light = world.get_light(test_vec)
             if block not in (' ', '?', '.', 'S'):
                 return block, light, distance
-        return '?', '.', -1
+        return '?', '.', maxdist
 
 # update

@@ -7,16 +7,25 @@ class World:
     def __init__(self, level='maps/level0.txt'):
         self.name = ''
         level = self.load(level)
-        self.levelmap, self.levellight, self.map_width, self.map_height = self.make_map(level['terrain'], level['lighting'])
+        self.levelmap, self.levellight, self.map_width, self.map_height = self.make_map(level['terrain'],
+                                                                                        level['lighting'])
+        self.name = level['name']
         self.levellight = self.calc_light(self.levellight)
+        self.nextlevel = level['nextlevel']
+
+    def get_next(self):
+        return self.nextlevel
+
+    def get_name(self):
+        return self.name
 
     def calc_light(self, lightmap):
         newmap = tolist(lightmap)
         for x in range(self.map_width):
             for y in range(self.map_height):
                 if self.get_light(Vec2(x, y)) == '#':
-                    for tx in range(x-1,x+1):
-                        for ty in range(y-1,y+1):
+                    for tx in range(x - 1, x + 1):
+                        for ty in range(y - 1, y + 1):
                             if self.get_light(Vec2(tx, ty)) != '#':
                                 newmap[y * self.map_width + x] = '.'
         return tostr(newmap)
