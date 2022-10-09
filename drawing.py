@@ -27,6 +27,7 @@ colors = {
     'M': curses.COLOR_MAGENTA
 }
 
+
 class Drawing:
     def __init__(self, screen, textures):
         self.screen = screen
@@ -66,7 +67,7 @@ class Drawing:
             for row in range(10):
                 if not (row == int(world.map_width / 2) and col == int(world.map_height / 2)):
                     mblock = world.get_block(Vec2(round(playerpos.x + row - world.map_width / 2),
-                                             round(playerpos.y + col - world.map_height / 2)))
+                                                  round(playerpos.y + col - world.map_height / 2)))
                     tex = mblock
                     if mblock == "?":
                         tex = " "
@@ -91,12 +92,17 @@ class Drawing:
                 floor = int(screen_height - ceiling + playerangle.y * 2)
 
                 for row in range(screen_height):
+                    shade = 0
                     if row <= ceiling:
-                        tex = "C"
+                        tex = "█"
                         color = curses.COLOR_CYAN
                         shade = curses.A_BOLD
                     elif floor >= row > ceiling:
                         tex, color = self.get_texture(block, col, row)
+                        if player_light == '.':
+                            dist /= 4
+                        elif player_light == ' ':
+                            dist /= 2
                         if dist <= DEPTH / 3:
                             shade = curses.A_BOLD
                         elif dist <= DEPTH / 2:
@@ -106,12 +112,11 @@ class Drawing:
                         else:
                             tex = " "
                             shade = curses.A_DIM
-
                         if block == '?':
                             tex = ""
                     else:
                         color = curses.COLOR_BLUE
-                        tex = "F"
+                        tex = "█"
                         shade = curses.A_BOLD
                     if light == '.':
                         if shade == curses.A_BOLD:
@@ -130,9 +135,31 @@ class Drawing:
                         elif shade == curses.A_DIM:
                             shade = curses.A_NORMAL
                             tex = " "
-                    if 0 <= row < 2:
-                        if 0 <= col < 2:
+                    if player_light == '.':
+                        if shade == curses.A_BOLD:
+                            shade = curses.A_NORMAL
+                        else:
+                            shade = curses.A_DIM
+                    elif player_light == ' ':
+                        shade = curses.A_DIM
+                    if player_light == '.':
+                        if 0 <= row < 1:
                             tex = " "
+                        elif 0 <= col < 2:
+                            tex = " "
+                        elif screen_height - 1 <= row < screen_height:
+                            tex = " "
+                        elif screen_width - 2 <= col < screen_width:
+                            tex = " "
+                    elif player_light == ' ':
+                        if 0 <= row < 2:
+                            tex = " "
+                        elif 0 <= col < 3:
+                            tex = " "
+                        elif screen_height - 2 <= row < screen_height:
+                            tex = " "
+                        elif screen_width - 3 <= col < screen_width:
+                            tex = " "
+                    # shade = [curses.A_BOLD, curses.A_NORMAL, curses.A_DIM][self.frame % 3]
                     self.screen.insstr(row, col, tex, curses.color_pair(color) | shade)
-
 # update

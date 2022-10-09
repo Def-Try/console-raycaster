@@ -1,5 +1,4 @@
 {
 "texture": "█◘▄◘",
-"mask": "RGBG",
-"color": "WHITE"
+"clrmask": "RGBG"
 }
