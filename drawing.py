@@ -128,3 +128,5 @@ class Drawing:
                             tex = " "
                     self.screen.insstr(row, col, tex, curses.color_pair(color) | shade)
                     prevtex = tex
+
+# update

@@ -92,3 +92,4 @@ if __name__ == "__main__":
     print(f"round(Vec2(1.1,1.6), 2) = {round(Vec2(1.1, 1.6), 2)}")
     print(f"round(Vec2(1.1,1.6)) = {round(Vec2(1.1, 1.6))}")
 
+# update

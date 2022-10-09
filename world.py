@@ -46,3 +46,5 @@ class World:
         if 0 <= pos.x < self.map_width and 0 <= pos.y < self.map_height:
             return self.levellight[pos.y * self.map_width + pos.x]
         return ' '
+
+# update

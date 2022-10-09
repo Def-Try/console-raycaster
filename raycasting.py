@@ -19,3 +19,5 @@ class Raycasting:
             if block not in (' ', '?', '.', 'S'):
                 return block, light, distance
         return '?', '.', -1
+
+# update
