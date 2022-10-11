@@ -8,23 +8,16 @@ from world import World
 
 FOV = radians(90)
 DEPTH = 16
-TILESIZE = 40
+TILESIZE = 10
 
 colors = {
-    'RED': curses.COLOR_RED,
-    'WHITE': curses.COLOR_WHITE,
-    'YELLOW': curses.COLOR_YELLOW,
-    'BLUE': curses.COLOR_BLUE,
-    'GREEN': curses.COLOR_GREEN,
-    'CYAN': curses.COLOR_CYAN,
-    'MAGENTA': curses.COLOR_MAGENTA,
-    'R': curses.COLOR_RED,
-    'W': curses.COLOR_WHITE,
-    'Y': curses.COLOR_YELLOW,
-    'B': curses.COLOR_BLUE,
-    'G': curses.COLOR_GREEN,
-    'C': curses.COLOR_CYAN,
-    'M': curses.COLOR_MAGENTA
+    'R': (88, 124, 160),
+    'B': (17, 19, 21),
+    'G': (22, 2, 40),
+    'C': (26, 9, 39),
+    'M': (5, 13, 127),
+    'Y': (6, 220, 226),
+    'W': (7, 8, 15)
 }
 
 
@@ -34,9 +27,9 @@ class Drawing:
         self.caster = Raycasting()
         self.textures = textures
         self.frame = 0
-        self.oframe = 1
+        self.oframe = 0
         self.fps = "..."
-        self.time = time() // 10
+        self.time = time()
 
     def get_texture(self, b, c, r):
         if b == "?":
@@ -48,26 +41,26 @@ class Drawing:
             return blocktexture[0][(r * TILESIZE + c) % len(blocktexture[0])], \
                    colors[blocktexture[1][(r * TILESIZE + c) % len(blocktexture[1])]]
         except KeyError:
-            return "b", curses.COLOR_WHITE
+            return "b", colors['W']
 
     def flush(self):
         self.screen.refresh()
 
     def debuginfo(self, playerpos, playerangle):
-        if self.time != time() // 10:
-            self.time = time() // 10
-            self.fps = self.frame - self.oframe
+        if (time() - self.time) > 1:
+            self.fps = round((self.frame - self.oframe) / (time() - self.time))
+            self.time = time()
             self.oframe = self.frame
         h, w = self.screen.getmaxyx()
         self.screen.addstr(h - 1, 0, "Pos: " + str(playerpos) + "  Ang: " + str(playerangle))
         self.screen.addstr(0, w - len("FPS:" + str(self.fps)), "FPS:" + str(self.fps))
 
-    def rendermap(self, world: World, playerpos):
+    def rendermap(self, world: World, player):
         for col in range(10):
             for row in range(10):
                 if not (row == int(world.map_width / 2) and col == int(world.map_height / 2)):
-                    mblock = world.get_block(Vec2(round(playerpos.x + row - world.map_width / 2),
-                                                  round(playerpos.y + col - world.map_height / 2)))
+                    mblock = world.get_block(Vec2(round(player.pos.x + row - world.map_width / 2),
+                                                  round(player.pos.y + col - world.map_height / 2)))
                     tex = mblock
                     if mblock == "?":
                         tex = " "
@@ -79,20 +72,19 @@ class Drawing:
                     shade = curses.A_BOLD
                 self.screen.addstr(row, col, tex, curses.color_pair(color) | shade)
 
-    def renderworld(self, world: World, playerpos, playerangle):
+    def renderworld(self, world: World, player):
         self.frame += 1
         screen_height, screen_width = self.screen.getmaxyx()
-        player_light = world.get_light(playerpos)
+        player_light = world.get_light(player.pos)
         for col in range(screen_width):
-            rayangle = (playerangle.x - FOV / 2) + (col / screen_width) * FOV
-            block, light, dist = self.caster.raycast(playerpos, rayangle, 8, 0.1, world)
-            dist *= cos(playerangle.x - rayangle)
+            rayangle = (player.ang.x - FOV / 2) + (col / screen_width) * FOV
+            block, light, dist = self.caster.raycast(player.pos, rayangle, 8, 0.1, world)
+            dist *= cos(player.ang.x - rayangle)
             if block not in (' ', '.'):
-                ceiling = int(screen_height / 2 - screen_height / dist) + playerangle.y
-                floor = int(screen_height - ceiling + playerangle.y * 2)
+                ceiling = int(screen_height / 2 - screen_height / dist) + player.ang.y
+                floor = int(screen_height - ceiling + player.ang.y * 2)
 
                 for row in range(screen_height):
-                    shade = 0
                     if row <= ceiling:
                         tex = "█"
                         color = curses.COLOR_CYAN
@@ -160,6 +152,14 @@ class Drawing:
                             tex = " "
                         elif screen_width - 3 <= col < screen_width:
                             tex = " "
-                    # shade = [curses.A_BOLD, curses.A_NORMAL, curses.A_DIM][self.frame % 3]
+
+                    if type(color) is tuple:
+                        if shade == curses.A_BOLD:
+                            color = color[2]
+                        elif shade == curses.A_NORMAL:
+                            color = color[1]
+                        elif shade == curses.A_DIM:
+                            color = color[0]
                     self.screen.insstr(row, col, tex, curses.color_pair(color) | shade)
+
 # update

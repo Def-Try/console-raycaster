@@ -45,6 +45,7 @@ class Vec2:
         return f"Vec2{self.x, self.y}"
 
 
+
 def tolist(istr):
     glist = {}
     for i in range(len(istr)):
@@ -57,6 +58,40 @@ def tostr(ilist):
     for i in range(len(ilist)):
         gstr += ilist[i]
     return gstr
+
+
+class Player:
+    def __init__(self, pos=Vec2(0, 0), ang=Vec2(0, 0)):
+        self.pos = pos
+        self.ang = ang
+
+    def handlecontrols(self, screen, world):
+        screen.timeout(0)
+        key_code = screen.getch()
+        key = chr(key_code) if 0 < key_code < 256 else 0
+        if key == chr(27):
+            exit()
+        shiftvec = Vec2(0, 0)
+        if key == 'w':
+            shiftvec = Vec2(sin(self.ang.x) * SPEED, cos(self.ang.x) * SPEED)
+            self.pos += shiftvec
+        elif key == 's':
+            shiftvec = Vec2(-sin(self.ang.x) * SPEED, -cos(self.ang.x) * SPEED)
+            self.pos += shiftvec
+        elif key == 'a':
+            self.ang -= Vec2(ROTATION_SPEED, 0)
+        elif key == 'd':
+            self.ang += Vec2(ROTATION_SPEED, 0)
+        elif key == 'r':
+            self.ang += Vec2(0, degrees(ROTATION_SPEED))
+        elif key == 'f':
+            self.ang -= Vec2(0, degrees(ROTATION_SPEED))
+
+        if world.get_block(self.pos) == 'E':
+            return 'NEXT'
+
+        if not world.get_block(self.pos) in (" ", "?", ".", "S", "E"):
+            self.pos -= shiftvec
 
 
 playerpos = Vec2(2, 2)
@@ -92,11 +127,13 @@ def handlecontrols(screen, world):
     if not world.get_block(playerpos) in (" ", "?", ".", "S", "E"):
         playerpos -= shiftvec
 
+
 if __name__ == "__main__":
+    a, b = 0, 0
     print("Testing vec2")
-    print(f"Vec2(1,1) + 1 = {Vec2(1,1) + 1}")
-    print(f"Vec2(1,1) + Vec2(1,2) = {Vec2(1, 1) + Vec2(1,2)}")
-    print(f"Vec2(3,1).x = {Vec2(3,1).x}")
+    print(f"Vec2(1,1) + 1 = {Vec2(1, 1) + 1}")
+    print(f"Vec2(1,1) + Vec2(1,2) = {Vec2(1, 1) + Vec2(1, 2)}")
+    print(f"Vec2(3,1).x = {Vec2(3, 1).x}")
     print(f"round(Vec2(1.1,1.6), 2) = {round(Vec2(1.1, 1.6), 2)}")
     print(f"round(Vec2(1.1,1.6)) = {round(Vec2(1.1, 1.6))}")
 

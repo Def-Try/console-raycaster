@@ -19,6 +19,13 @@ class World:
     def get_name(self):
         return self.name
 
+    def get_start(self):
+        for x in range(self.map_width):
+            for y in range(self.map_height):
+                if self.get_block(Vec2(x, y)) == 'S':
+                    return Vec2(x, y)
+        return round(Vec2(self.map_width, self.map_height) / 2)
+
     def calc_light(self, lightmap):
         newmap = tolist(lightmap)
         for x in range(self.map_width):

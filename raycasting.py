@@ -1,10 +1,12 @@
-from math import cos, sin
+from math import cos, sin, radians
 
 from utils import Vec2
 
+TILESIZE = 10
+FOV = radians(90)
+
 
 class Raycasting:
-
     @staticmethod
     def raycast(origin, angle, maxdist, step, world):
         distance = 0.0
@@ -18,6 +20,4 @@ class Raycasting:
             light = world.get_light(test_vec)
             if block not in (' ', '?', '.', 'S'):
                 return block, light, distance
-        return '?', '.', maxdist
-
-# update
+        return '?', '.', maxdist - 0.01

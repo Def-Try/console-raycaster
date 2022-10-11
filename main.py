@@ -33,14 +33,14 @@ def main(screen):
         curses.init_pair(i, i, curses.COLOR_BLACK)
     while True:
         worldmap = world.World(nextlevel)
-        utils.playerpos = utils.Vec2(2, 2)
+        player = utils.Player(worldmap.get_start(), utils.Vec2(0, 0))
         while True:
-            draw.renderworld(worldmap, utils.playerpos, utils.playerangle)
-            draw.rendermap(worldmap, utils.playerpos)
-            draw.debuginfo(round(utils.playerpos, 2), round(utils.playerangle, 2))
+            draw.renderworld(worldmap, player)
+            draw.rendermap(worldmap, player)
+            draw.debuginfo(round(player.pos, 2), round(player.ang, 2))
             draw.flush()
 
-            x = utils.handlecontrols(screen, worldmap)
+            x = player.handlecontrols(screen, worldmap)
             if x == 'NEXT':
                 nextlevel = 'maps/' + worldmap.get_next()
                 break
